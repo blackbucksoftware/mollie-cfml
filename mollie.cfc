@@ -48,6 +48,7 @@
         <cfargument name="webhookUrl" type="string" required="false" />
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="metadata" type="array" required="false" />
+        <cfargument name="method" type="string" required="false" />
 
 
         <cfset response = this.GetNewResponse() />
@@ -141,6 +142,101 @@
         </cftry>
 
         <cfreturn response />
+    </cffunction>
+
+    <cffunction name="updatePayment" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+
+        <cfargument name="description" type="string" required="false" />
+        <cfargument name="redirectUrl" type="string" required="false" />
+        <cfargument name="webhookUrl" type="string" required="false" />
+        <cfargument name="metadata" type="array" required="false" />
+        <cfargument name="method" type="string" required="false" />
+        <cfargument name="locale" type="string" required="false" />
+
+        <!--- payment method-specific parameters --->
+        <cfargument name="billingEmail" type="string" required="false" />
+        <cfargument name="dueDate" type="string" required="false" />
+        <cfargument name="issuer" type="string" required="false" />
+
+
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        
+        <cfscript>
+            dataFields = {};
+            dataFields['Globals'] = {};
+
+            if ( structKeyExists(arguments, "description") ) {
+                dataFields.Globals['description'] = arguments.description;
+            }
+
+            if ( structKeyExists(arguments, "redirectUrl") ) {
+                dataFields.Globals['redirectUrl'] = arguments.redirectUrl;
+            }
+
+            if ( structKeyExists(arguments, "webhookUrl") ) {
+                dataFields.Globals['webhookUrl'] = arguments.webhookUrl;
+            }
+
+            if ( structKeyExists(arguments, "metadata") ) {
+                if ( arguments.metadata.len() GT 0 ) {
+                    dataFields.Globals['metadata'] = [];
+                    for (currentIndex in arguments.metadata) {
+                        dataFields.Globals['metadata'].append( currentIndex );
+                    }
+                }
+            }
+
+            if ( structKeyExists(arguments, "method") ) {
+                dataFields.Globals['method'] = arguments.locale;
+            }
+
+            if ( structKeyExists(arguments, "locale") ) {
+                dataFields.Globals['locale'] = arguments.locale;
+            }
+
+            if ( structKeyExists(arguments, "billingEmail") ) {
+                dataFields.Globals['billingEmail'] = arguments.locale;
+            }
+
+            if ( structKeyExists(arguments, "dueDate") ) {
+                dataFields.Globals['dueDate'] = arguments.locale;
+            }
+
+            if ( structKeyExists(arguments, "issuer") ) {
+                dataFields.Globals['issuer'] = arguments.locale;
+            }
+            
+        </cfscript>
+
+        <cfscript>
+            messageBody = {};
+            messageBody = serializejson(dataFields.Globals);
+        </cfscript>
+
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="https://api.mollie.com/v2/payments/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfhttpparam type="body" name="field" value='#messageBody#' />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfset response.body = messageBody />
+            <cflog file="mollie" text="updatePayment: #serializeJSON( mollieresult )#" />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in updatePayment: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    
     </cffunction>
 
 </cfcomponent>

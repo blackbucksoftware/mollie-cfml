@@ -22,5 +22,23 @@
     <cfset resMollie = deserializeJSON( ergebnis.DATA.filecontent ) />
     
     
-    <cfdump var="#resMollie#" />
+    <cfdump var="#resMollie#" label="createPayment"/>
+
+
+    <cfscript>
+        metadatanew = arrayNew(1);
+        newStruct.update("orderid", "001update");
+        metadatanew.append( newStruct );
+    </cfscript>
+
+    <cfset ergebnisUpdate = myMollie.updatePayment(
+        id = resMollie.id,
+        metadata = metadata
+    ) />
+
+    
+    <cfset resMollieUpdate = deserializeJSON( ergebnisUpdate.DATA.filecontent ) />
+    
+    
+    <cfdump var="#resMollieUpdate#" label="updatePayment"/>
     
