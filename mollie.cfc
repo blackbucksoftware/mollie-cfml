@@ -289,7 +289,7 @@
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
-                <cfhttpparam type="body" name="field" value='#messageBody#' />
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfset response.body = messageBody />
