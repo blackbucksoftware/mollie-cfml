@@ -8,35 +8,22 @@
     <cfset variables.instance = { key = '' } />
 
  	<cffunction name="init" access="public" output="false" returntype="any" hint="I am the constructor method">
-           <cfargument name="key" required="true" type="string" hint="I am the Mollie API key." />
-
+        <cfargument name="key" required="true" type="string" hint="I am the Mollie API key." />
        	<cfscript>
             variables.instance.key = arguments.key;
+            variables.instance.baseUrl = "https://api.mollie.com/v2";
        	</cfscript>
    		<cfreturn this />
    	</cffunction>
 
-       <cffunction
-       name="GetNewResponse"
-       access="public"
-       returntype="struct"
-       output="false"
-       hint="I return a new API response struct.">
 
-       <!--- Define the local scope. --->
-       <cfset var LOCAL = {} />
-
+    <cffunction name="GetNewResponse" access="public" localmode="modern" returntype="struct" output="false" hint="I return a new API response struct.">
        <!--- Create new API response. --->
-       <cfset LOCAL.Response = {
-           Success = true,
-           Errors = [],
-           Data = ""
-           } />
+       <cfset response = { Success = true, Errors = [], Data = "" } />
 
        <!--- Return the empty response object. --->
-       <cfreturn LOCAL.Response />
-   </cffunction>
-
+       <cfreturn response />
+    </cffunction>
 		
     
     <cffunction name="createPayment" localmode="modern" access="public" output="false" returntype="any" hint="">
@@ -49,7 +36,6 @@
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="metadata" type="array" required="false" />
         <cfargument name="method" type="string" required="false" />
-
 
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -101,7 +87,7 @@
 
        
         <cftry>
-            <cfhttp result="mollieresult" method="POST" charset="utf-8" url="https://api.mollie.com/v2/payments">
+            <cfhttp result="mollieresult" method="POST" charset="utf-8" url="#variables.instance.baseUrl#/payments">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfhttpparam type="body" name="field" value='#messageBody#' />
@@ -129,7 +115,7 @@
         <cfset response.success = true />
        
         <cftry>
-            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="https://api.mollie.com/v2/payments/#arguments.id#">
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
             </cfhttp>
             <cfset response.data = mollieresult />
@@ -219,7 +205,7 @@
 
        
         <cftry>
-            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="https://api.mollie.com/v2/payments/#arguments.id#">
+            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="#variables.instance.baseUrl#/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfhttpparam type="body" name="field" value='#messageBody#' />
@@ -247,7 +233,7 @@
         <cfset response.success = true />
        
         <cftry>
-            <cfhttp result="mollieresult" method="DELETE" charset="utf-8" url="https://api.mollie.com/v2/payments/#arguments.id#">
+            <cfhttp result="mollieresult" method="DELETE" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
             </cfhttp>
             <cfset response.data = mollieresult />
@@ -300,7 +286,7 @@
         </cfscript>
        
         <cftry>
-            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="https://api.mollie.com/v2/payments">
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfhttpparam type="body" name="field" value='#messageBody#' />
