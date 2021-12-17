@@ -239,4 +239,84 @@
     
     </cffunction>
 
+    <cffunction name="cancelPayment" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="DELETE" charset="utf-8" url="https://api.mollie.com/v2/payments/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in cancelPayment: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listPayments" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfargument name="profileId" type="string" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cfscript>
+            dataFields = {};
+            dataFields['Globals'] = {};
+
+            if ( structKeyExists(arguments, "from") ) {
+                dataFields.Globals['from'] = arguments.from;
+            }
+
+            if ( structKeyExists(arguments, "limit") ) {
+                dataFields.Globals['limit'] = arguments.limit;
+            }
+
+            if ( structKeyExists(arguments, "profileId") ) {
+                dataFields.Globals['profileId'] = arguments.profileId;
+            }
+
+            if ( structKeyExists(arguments, "testmode") ) {
+                dataFields.Globals['testmode'] = arguments.testmode;
+            }
+            
+        </cfscript>
+
+        <cfscript>
+            messageBody = {};
+            messageBody = serializejson(dataFields.Globals);
+        </cfscript>
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="https://api.mollie.com/v2/payments">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfhttpparam type="body" name="field" value='#messageBody#' />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfset response.body = messageBody />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listPayments: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+
 </cfcomponent>
