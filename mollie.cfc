@@ -117,6 +117,7 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -258,41 +259,16 @@
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
 
-        <cfscript>
-            dataFields = {};
-            dataFields['Globals'] = {};
-
-            if ( structKeyExists(arguments, "from") ) {
-                dataFields.Globals['from'] = arguments.from;
-            }
-
-            if ( structKeyExists(arguments, "limit") ) {
-                dataFields.Globals['limit'] = arguments.limit;
-            }
-
-            if ( structKeyExists(arguments, "profileId") ) {
-                dataFields.Globals['profileId'] = arguments.profileId;
-            }
-
-            if ( structKeyExists(arguments, "testmode") ) {
-                dataFields.Globals['testmode'] = arguments.testmode;
-            }
-            
-        </cfscript>
-
-        <cfscript>
-            messageBody = {};
-            messageBody = serializejson(dataFields.Globals);
-        </cfscript>
-       
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
-            <cfset response.body = messageBody />
             <cfcatch type="any">
                 <cfset response.success = false />
                 <cfset response.error = cfcatch.message />
