@@ -375,5 +375,186 @@
         <cfreturn response />
     </cffunction>
 
+    <cffunction name="createRefund" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="paymentId" type="string" required="true" />
+        <cfargument name="currency" type="string" required="true" />
+        <cfargument name="value" type="string" required="true" />
+
+        <cfargument name="description" type="string" required="false" />
+        <cfargument name="metadata" type="array" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        <cfargument name="reverseRouting" type="boolean" default="false" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        
+        <cfscript>
+            dataFields = {};
+            dataFields['Globals'] = {};
+
+            dataFields.Globals['amount'] = {};
+            dataFields.Globals.amount['currency'] = arguments.currency;
+            dataFields.Globals.amount['value'] = NumberFormat(arguments.value, "9.00");
+            
+            if ( structKeyExists(arguments, "description") ) {
+                dataFields.Globals['description'] = arguments.description;
+            }
+            
+            if ( structKeyExists(arguments, "metadata") ) {
+                if ( arguments.metadata.len() GT 0 ) {
+                    dataFields.Globals['metadata'] = [];
+                    for (currentIndex in arguments.metadata) {
+                        dataFields.Globals['metadata'].append( currentIndex );
+                    }
+                }
+            }
+
+            if ( structKeyExists(arguments, "reverseRouting") ) {
+                 dataFields.Globals['reverseRouting'] = arguments.reverseRouting;
+            }
+
+            if ( structKeyExists(arguments, "testmode") ) {
+                 dataFields.Globals['testmode'] = arguments.testmode;
+            }
+
+        </cfscript>
+
+        <cfscript>
+            messageBody = {};
+            messageBody = serializejson(dataFields.Globals);
+        </cfscript>
+
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="POST" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/refunds">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfhttpparam type="body" name="field" value='#messageBody#' />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfset response.body = messageBody />
+            <cflog file="mollie" text="createRefund: #serializeJSON( mollieresult )#" />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in createRefund: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    
+    </cffunction>
+
+    <cffunction name="getRefund" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+        <cfargument name="paymentId" type="string" required="true" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/refunds/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in getRefund: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="cancelRefund" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+        <cfargument name="paymentId" type="string" required="true" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="DELETE" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/refunds/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in cancelRefund: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listRefunds" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="paymentId" type="string" required="true" />
+
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/refunds">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listRefunds: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listAllRefunds" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfargument name="profileId" type="string" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/refunds">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listAllRefunds: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
 
 </cfcomponent>
