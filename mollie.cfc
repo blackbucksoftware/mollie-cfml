@@ -280,5 +280,39 @@
         <cfreturn response />
     </cffunction>
 
+    <!--- Methods API: List payment methods --->
+    <cffunction name="listMethods" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="sequenceType" type="string" required="false" />
+        <cfargument name="locale" type="string" required="false" />
+        <cfargument name="currency" type="string" required="false" />
+        <cfargument name="value" type="string" required="false" />
+        <cfargument name="resource" type="string" required="false" />
+        <cfargument name="billingCountry" type="string" required="false" />
+        <cfargument name="includeWallets" type="string" required="false" />
+        <cfargument name="orderLineCategories" type="string" required="false" />
+        <cfargument name="profileId" type="string" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/methods">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="url" name="sequenceType" value="#arguments.sequenceType#" />
+                
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listPayments: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
 
 </cfcomponent>
