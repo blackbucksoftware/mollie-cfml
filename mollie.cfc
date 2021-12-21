@@ -557,4 +557,86 @@
         <cfreturn response />
     </cffunction>
 
+    <cffunction name="getChargeback" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+        <cfargument name="paymentId" type="string" required="true" />
+        <cfargument name="profileId" type="string" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/chargebacks/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in getChargeback: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listChargebacks" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="paymentId" type="string" required="true" />
+
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/chargebacks">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listChargebacks: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listAllChargebacks" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfargument name="profileId" type="string" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/chargebacks">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listAllChargebacks: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
 </cfcomponent>
