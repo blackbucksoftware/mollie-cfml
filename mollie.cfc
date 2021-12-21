@@ -262,7 +262,6 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
                 <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
@@ -307,7 +306,69 @@
                 <cfset response.success = false />
                 <cfset response.error = cfcatch.message />
                 
-                <cflog file="mollie" text="Error in listPayments: #serializeJSON( cfcatch )#" />
+                <cflog file="mollie" text="Error in listMethods: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listAllMethods" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="locale" type="string" required="false" />
+        <cfargument name="currency" type="string" required="false" />
+        <cfargument name="value" type="string" required="false" />
+        <cfargument name="profileId" type="string" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/methods/all">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "locale")><cfhttpparam type="url" name="locale" value="#arguments.locale#" /></cfif>
+                <cfif structKeyExists(arguments, "currency") AND structKeyExists(arguments, "value")>
+                  <cfhttpparam type="url" name="amount[value]" value="#arguments.value#" />
+                  <cfhttpparam type="url" name="amount[currency]" value="#arguments.currency#" />
+                </cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>                
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listAllMethods: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="getMethod" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="id" type="string" required="true" />
+
+        <cfargument name="locale" type="string" required="false" />
+        <cfargument name="currency" type="string" required="false" />
+        <cfargument name="profileId" type="string" required="false" />
+        <cfargument name="testmode" type="boolean" default="false" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/methods/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "locale")><cfhttpparam type="url" name="locale" value="#arguments.locale#" /></cfif>
+                <cfif structKeyExists(arguments, "currency")><cfhttpparam type="url" name="currency" value="#arguments.currency#" /></cfif>
+                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif> 
+                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>               
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in getMethod: #serializeJSON( cfcatch )#" />
             </cfcatch>
         </cftry>
 
