@@ -109,7 +109,6 @@
 
     <cffunction name="getPayment" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="id" type="string" required="true" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -117,7 +116,6 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -206,7 +204,7 @@
 
        
         <cftry>
-            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="#variables.instance.baseUrl#/#arguments.id#">
+            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfhttpparam type="body" name="field" value='#messageBody#' />
@@ -228,7 +226,6 @@
 
     <cffunction name="cancelPayment" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="id" type="string" required="true" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -252,9 +249,6 @@
     <cffunction name="listPayments" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="from" type="string" required="false" />
         <cfargument name="limit" type="numeric" required="false" />
-
-        <cfargument name="profileId" type="string" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -264,8 +258,6 @@
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -289,8 +281,6 @@
         <cfargument name="billingCountry" type="string" required="false" />
         <cfargument name="includeWallets" type="string" required="false" />
         <cfargument name="orderLineCategories" type="string" required="false" />
-        <cfargument name="profileId" type="string" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -298,8 +288,15 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/methods">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfhttpparam type="url" name="sequenceType" value="#arguments.sequenceType#" />
-                
+                <cfif structKeyExists(arguments, "sequenceType")><cfhttpparam type="url" name="sequenceType" value="#arguments.sequenceType#" /></cfif>
+                <cfif structKeyExists(arguments, "locale")><cfhttpparam type="url" name="locale" value="#arguments.locale#" /></cfif>
+                <cfif structKeyExists(arguments, "currency")><cfhttpparam type="url" name="amount[currency]" value="#arguments.currency#" /></cfif>
+                <cfif structKeyExists(arguments, "value")><cfhttpparam type="url" name="amount[value]" value="#arguments.value#" /></cfif>
+                <cfif structKeyExists(arguments, "resource")><cfhttpparam type="url" name="resource" value="#arguments.resource#" /></cfif>
+                <cfif structKeyExists(arguments, "billingCountry")><cfhttpparam type="url" name="billingCountry" value="#arguments.billingCountry#" /></cfif>
+                <cfif structKeyExists(arguments, "includeWallets")><cfhttpparam type="url" name="includeWallets" value="#arguments.includeWallets#" /></cfif>
+                <cfif structKeyExists(arguments, "orderLineCategories")><cfhttpparam type="url" name="orderLineCategories" value="#arguments.orderLineCategories#" /></cfif>
+
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -317,7 +314,6 @@
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="currency" type="string" required="false" />
         <cfargument name="value" type="string" required="false" />
-        <cfargument name="profileId" type="string" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -330,7 +326,6 @@
                   <cfhttpparam type="url" name="amount[value]" value="#arguments.value#" />
                   <cfhttpparam type="url" name="amount[currency]" value="#arguments.currency#" />
                 </cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>                
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -349,8 +344,6 @@
 
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="currency" type="string" required="false" />
-        <cfargument name="profileId" type="string" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -360,8 +353,6 @@
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfif structKeyExists(arguments, "locale")><cfhttpparam type="url" name="locale" value="#arguments.locale#" /></cfif>
                 <cfif structKeyExists(arguments, "currency")><cfhttpparam type="url" name="currency" value="#arguments.currency#" /></cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif> 
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>               
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -382,7 +373,6 @@
 
         <cfargument name="description" type="string" required="false" />
         <cfargument name="metadata" type="array" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         <cfargument name="reverseRouting" type="boolean" default="false" required="false" />
 
         <cfset response = this.GetNewResponse() />
@@ -412,10 +402,6 @@
 
             if ( structKeyExists(arguments, "reverseRouting") ) {
                  dataFields.Globals['reverseRouting'] = arguments.reverseRouting;
-            }
-
-            if ( structKeyExists(arguments, "testmode") ) {
-                 dataFields.Globals['testmode'] = arguments.testmode;
             }
 
         </cfscript>
@@ -450,7 +436,6 @@
     <cffunction name="getRefund" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="id" type="string" required="true" />
         <cfargument name="paymentId" type="string" required="true" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -458,7 +443,6 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/refunds/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -475,7 +459,6 @@
     <cffunction name="cancelRefund" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="id" type="string" required="true" />
         <cfargument name="paymentId" type="string" required="true" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -502,8 +485,6 @@
 
         <cfargument name="from" type="string" required="false" />
         <cfargument name="limit" type="numeric" required="false" />
-
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -513,7 +494,6 @@
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -530,9 +510,6 @@
     <cffunction name="listAllRefunds" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="from" type="string" required="false" />
         <cfargument name="limit" type="numeric" required="false" />
-
-        <cfargument name="profileId" type="string" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -542,8 +519,6 @@
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -560,8 +535,6 @@
     <cffunction name="getChargeback" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="id" type="string" required="true" />
         <cfargument name="paymentId" type="string" required="true" />
-        <cfargument name="profileId" type="string" required="false" />
-        <cfargument name="testmode" type="boolean" default="false" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -569,8 +542,6 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.paymentId#/chargebacks/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
@@ -614,8 +585,6 @@
     <cffunction name="listAllChargebacks" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="from" type="string" required="false" />
         <cfargument name="limit" type="numeric" required="false" />
-
-        <cfargument name="profileId" type="string" required="false" />
         
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -625,7 +594,6 @@
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
                 <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
-                <cfif structKeyExists(arguments, "profileId")><cfhttpparam type="url" name="profileId" value="#arguments.profielId#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
