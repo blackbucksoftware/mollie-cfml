@@ -940,6 +940,10 @@
         <cfreturn response />
     </cffunction>
 
+    <!--- 
+    ******************************* MANDATES API ******************************
+    --->
+
     <cffunction name="createMandate" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="customerId" type="string" required="true" />
 
@@ -1087,6 +1091,5 @@
 
         <cfreturn response />
     </cffunction>
-
 
 </cfcomponent>
