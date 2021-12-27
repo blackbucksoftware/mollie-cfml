@@ -1092,4 +1092,310 @@
         <cfreturn response />
     </cffunction>
 
+    <!--- 
+    **************************** SUBSCRIPTIONS API ***************************
+    --->
+
+    <cffunction name="createSubscription" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+
+        <cfargument name="currency" type="string" required="true" />
+        <cfargument name="value" type="string" required="true" />
+        <cfargument name="interval" type="string" required="true" />
+        <cfargument name="description" type="string" required="true" />
+
+        <cfargument name="times" type="numeric" required="false" />
+        <cfargument name="startDate" type="date" required="false" />
+        <cfargument name="mandateId" type="string" required="false" />
+        <cfargument name="webhookUrl" type="string" required="false" />
+        <cfargument name="metadata" type="array" required="false" />
+        <cfargument name="method" type="string" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cfscript>
+            dataFields = {};
+            dataFields['Globals'] = {};
+
+            dataFields.Globals['amount'] = {};
+            dataFields.Globals.amount['currency'] = arguments.currency;
+            dataFields.Globals.amount['value'] = NumberFormat(arguments.value, "9.00");
+            
+            dataFields.Globals['interval'] = arguments.interval;
+            dataFields.Globals['description'] = arguments.description;
+
+            if ( structKeyExists(arguments, "times") ) {
+                dataFields.Globals['times'] = arguments.times;
+            }
+
+            if ( structKeyExists(arguments, "startDate") ) {
+                dataFields.Globals['startDate'] = arguments.startDate;
+            }
+
+            if ( structKeyExists(arguments, "mandateId") ) {
+                dataFields.Globals['mandateId'] = arguments.mandateId;
+            }
+
+            if ( structKeyExists(arguments, "webhookUrl") ) {
+                dataFields.Globals['webhookUrl'] = arguments.webhookUrl;
+            }
+            
+            if ( structKeyExists(arguments, "metadata") ) {
+                if ( arguments.metadata.len() GT 0 ) {
+                    dataFields.Globals['metadata'] = [];
+                    for (currentIndex in arguments.metadata) {
+                        dataFields.Globals['metadata'].append( currentIndex );
+                    }
+                }
+            }
+
+            if ( structKeyExists(arguments, "method") ) {
+                dataFields.Globals['method'] = arguments.method;
+            }
+            
+        </cfscript>
+
+        <cfscript>
+            messageBody = {};
+            messageBody = serializejson(dataFields.Globals);
+        </cfscript>
+
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="POST" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfhttpparam type="body" name="field" value='#messageBody#' />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfset response.body = messageBody />
+            <cflog file="mollie" text="createSubscription: #serializeJSON( mollieresult )#" />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in createSubscription: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    
+    </cffunction>
+
+    <cffunction name="getSubscription" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+        <cfargument name="id" type="string" required="true" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in getSubscription: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="updateSubscription" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+        <cfargument name="id" type="string" required="true" />
+
+        <cfargument name="currency" type="string" required="false" />
+        <cfargument name="value" type="string" required="false" />
+        <cfargument name="interval" type="string" required="false" />
+        <cfargument name="description" type="string" required="false" />
+        <cfargument name="mandateId" type="string" required="false" />
+        <cfargument name="metadata" type="array" required="false" />
+        <cfargument name="startDate" type="date" required="false" />
+        <cfargument name="times" type="numeric" required="false" />
+        <cfargument name="webhookUrl" type="string" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+        
+        <cfscript>
+            dataFields = {};
+            dataFields['Globals'] = {};
+
+            if ( structKeyExists(arguments, "currency") AND structKeyExists(arguments, "value")) {
+                dataFields.Globals['amount'] = {};
+                dataFields.Globals.amount['currency'] = arguments.currency;
+                dataFields.Globals.amount['value'] = NumberFormat(arguments.value, "9.00");
+            }
+            
+            if ( structKeyExists(arguments, "interval") ) {
+                dataFields.Globals['interval'] = arguments.interval;
+            }
+
+            if ( structKeyExists(arguments, "description") ) {
+                dataFields.Globals['description'] = arguments.description;
+            }
+
+            if ( structKeyExists(arguments, "times") ) {
+                dataFields.Globals['times'] = arguments.times;
+            }
+
+            if ( structKeyExists(arguments, "startDate") ) {
+                dataFields.Globals['startDate'] = arguments.startDate;
+            }
+
+            if ( structKeyExists(arguments, "mandateId") ) {
+                dataFields.Globals['mandateId'] = arguments.mandateId;
+            }
+
+            if ( structKeyExists(arguments, "webhookUrl") ) {
+                dataFields.Globals['webhookUrl'] = arguments.webhookUrl;
+            }
+            
+            if ( structKeyExists(arguments, "metadata") ) {
+                if ( arguments.metadata.len() GT 0 ) {
+                    dataFields.Globals['metadata'] = [];
+                    for (currentIndex in arguments.metadata) {
+                        dataFields.Globals['metadata'].append( currentIndex );
+                    }
+                }
+            }
+            
+        </cfscript>
+
+        <cfscript>
+            messageBody = {};
+            messageBody = serializejson(dataFields.Globals);
+        </cfscript>
+
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="PATCH" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfhttpparam type="header" name="Content-Type" value="application/json" />
+                <cfhttpparam type="body" name="field" value='#messageBody#' />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfset response.body = messageBody />
+            <cflog file="mollie" text="updateSubscription: #serializeJSON( mollieresult )#" />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in updateSubscription: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    
+    </cffunction>
+
+    <cffunction name="cancelSubscription" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+        <cfargument name="id" type="string" required="true" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+       
+        <cftry>
+            <cfhttp result="mollieresult" method="DELETE" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions/#arguments.id#">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in cancelSubscription: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listCustomerSubscriptions" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listCustomerSubscriptions: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listAllSubscriptions" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+        
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/subscriptions">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listAllSubscritpions: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
+    <cffunction name="listSubscriptionPayments" localmode="modern" access="public" output="false" returntype="any" hint="">
+        <cfargument name="customerId" type="string" required="true" />
+        <cfargument name="subscriptionId" type="string" required="true" />
+
+        <cfargument name="from" type="string" required="false" />
+        <cfargument name="limit" type="numeric" required="false" />
+
+        <cfset response = this.GetNewResponse() />
+        <cfset response.success = true />
+
+        <cftry>
+            <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/subscriptions/#arguments.subscriptionId#/payments">
+                <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                <cfif structKeyExists(arguments, "from")><cfhttpparam type="url" name="from" value="#arguments.from#" /></cfif>
+                <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
+            </cfhttp>
+            <cfset response.data = mollieresult />
+            <cfcatch type="any">
+                <cfset response.success = false />
+                <cfset response.error = cfcatch.message />
+                
+                <cflog file="mollie" text="Error in listSubscriptionPayments: #serializeJSON( cfcatch )#" />
+            </cfcatch>
+        </cftry>
+
+        <cfreturn response />
+    </cffunction>
+
 </cfcomponent>
