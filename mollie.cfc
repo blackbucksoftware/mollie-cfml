@@ -35,7 +35,7 @@
         <cfargument name="webhookUrl" type="string" required="false" />
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="metadata" type="array" required="false" />
-        <cfargument name="method" type="string" required="false" />
+        <cfargument name="method" type="array" required="false" />
 
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
@@ -73,7 +73,7 @@
                 if ( arguments.method.len() GT 0 ) {
 
                     dataFields.Globals['method'] = [];
-                    for (item in listToArray(arguments.method, ",")) { 
+                    for (item in arguments.method) { 
                         dataFields.Globals['method'].append( item );
                     } 
                 }
@@ -117,7 +117,7 @@
         <cftry>
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/payments/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
-                <cfif structKeyExists(arguments, "testmode")><cfhttpparam type="url" name="testmode" value="#arguments.testmode#" /></cfif>
+                <cfif arguments.testmode == true><cfhttpparam type="url" name="testmode" value="true" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfcatch type="any">
