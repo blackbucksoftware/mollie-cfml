@@ -1,0 +1,56 @@
+{
+    "name":"Mollie CFML",
+    "version":"0.3.0",
+    "author":"Blackbuck Software GmbH",
+    "location":"blackbucksoftware/mollie-cfml#v0.3.0",
+    "homepage":"https://github.com/blackbucksoftware/mollie-cfml",
+    "documentation":"",
+    "repository":{
+        "type":"git",
+        "URL":"https://github.com/blackbucksoftware/mollie-cfml"
+    },
+    "bugs":"https://github.com/blackbucksoftware/mollie-cfml/issues",
+    "slug":"molliecfml",
+    "shortDescription":"Mollie CFML is a CFML library for interacting with the Mollie API.",
+    "description":"",
+    "instructions":"",
+    "changelog":"",
+    "type":"modules",
+    "keywords":[
+        "mollie",
+        "api"
+    ],
+    "private":false,
+    "projectURL":"",
+    "license":[
+        {
+            "type":"MIT",
+            "URL":"https://github.com/blackbucksoftware/mollie-cfml/blob/main/LICENSE"
+        }
+    ],
+    "contributors":[
+        "faxi05",
+        "maximaria"
+    ],
+    "dependencies":{},
+    "devDependencies":{
+        "testbox":"^4.0.0",
+        "coldbox":"^6.1.0+1309"
+    },
+    "installPaths":{
+        "testbox":"testbox/",
+        "coldbox":"tests/resources/app/coldbox/"
+    },
+    "scripts":{
+        "format":"cfformat run tests/specs/**/*.cfc,ModuleConfig.cfc,mollie.cfc --overwrite",
+        "format:check":"cfformat check tests/specs/**/*.cfc,ModuleConfig.cfc,mollie.cfc"
+    },
+    "ignore":[
+        "**/.*",
+        "tests"
+    ],
+    "testbox":{
+        "runner":"http://127.0.0.1:45000/tests/runner.cfm",
+        "tests_root":""
+    }
+}
