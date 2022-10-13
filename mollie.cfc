@@ -1,5 +1,5 @@
 <!---
-	mollie.cfc - Wrapper für Mollie API
+	mollie.cfc - Wrapper for Mollie API
 --->
 <cfcomponent displayname="mollie" output="false" hint="Mollie API v2 Wrapper">
     <!--- Pseudo-constructor --->
@@ -31,6 +31,11 @@
         <cfargument name="locale" type="string" required="false" />
         <cfargument name="metadata" type="array" required="false" />
         <cfargument name="method" type="array" required="false" />
+        <cfargument name="sequenceType" type="string" default="oneoff" required="false" />
+        <cfargument name="customerId" type="string" default="" required="false" />
+        <cfargument name="mandateId" type="string" default="" required="false" />
+        
+
         <cfset response = this.GetNewResponse() />
         <cfset response.success = true />
         
@@ -63,6 +68,11 @@
                     dataFields.Globals['method'] = [];
                     for (item in arguments.method) { 
                         dataFields.Globals['method'].append( item );
+                        if ( item == 'directdebit' ) {
+                            dataFields.Globals['sequenceType'] = arguments.sequenceType;
+                            dataFields.Globals['mandateId'] = arguments.mandateId;
+                            dataFields.Globals['customerId'] = arguments.customerId;
+                        }
                     } 
                 }
             }
@@ -78,7 +88,8 @@
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
                 <cfhttpparam type="body" name="field" value='#messageBody#' />
             </cfhttp>
-            <cfset response.data = mollieresult />
+            <cfset response.data = deserializeJSON(mollieresult.filecontent) />
+            
             <cfset response.body = messageBody />
             <cflog file="mollie" text="createPayment: #serializeJSON( mollieresult )#" />
             <cfcatch type="any">
@@ -577,7 +588,12 @@
             </cfhttp>
             <cfset response.data = mollieresult />
             <cfset response.body = messageBody />
+            <cfset response.customerid = "" />
             <cflog file="mollie" text="createCustomer: #serializeJSON( mollieresult )#" />
+
+            <cfset res = deserializeJSON( mollieresult.filecontent ) />
+            <cfset response.customerid = res.id />
+
             <cfcatch type="any">
                 <cfset response.success = false />
                 <cfset response.error = cfcatch.message />
@@ -868,6 +884,7 @@
         <cfreturn response />
     
     </cffunction>
+
     <cffunction name="getMandate" localmode="modern" access="public" output="false" returntype="any" hint="">
         <cfargument name="customerId" type="string" required="true" />
         <cfargument name="id" type="string" required="true" />
@@ -879,7 +896,7 @@
             <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/customers/#arguments.customerId#/mandates/#arguments.id#">
                 <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
             </cfhttp>
-            <cfset response.data = mollieresult />
+            <cfset response.data = deserializeJSON(mollieresult.filecontent)  />
             <cfcatch type="any">
                 <cfset response.success = false />
                 <cfset response.error = cfcatch.message />
@@ -923,6 +940,14 @@
                 <cfif structKeyExists(arguments, "limit")><cfhttpparam type="url" name="limit" value="#arguments.limit#" /></cfif>
             </cfhttp>
             <cfset response.data = mollieresult />
+            <cfset raw = deserializeJSON(mollieresult.filecontent) />
+            
+            <cfif structKeyExists(raw._embedded, "mandates")>
+                <cfif arrayLen(raw._embedded.mandates) GT 0>
+                    <cfset response.data = raw._embedded.mandates />
+                </cfif>
+            </cfif>
+
             <cfcatch type="any">
                 <cfset response.success = false />
                 <cfset response.error = cfcatch.message />
