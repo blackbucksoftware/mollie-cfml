@@ -20,7 +20,7 @@
         "mollie",
         "api"
     ],
-    "private":false,
+    "private":true,
     "projectURL":"",
     "license":[
         {
@@ -34,7 +34,7 @@
     ],
     "dependencies":{},
     "devDependencies":{
-        "testbox":"^4.0.0",
+        "testbox":"^4.5.0+5",
         "coldbox":"^6.1.0+1309"
     },
     "installPaths":{
