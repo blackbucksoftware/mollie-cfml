@@ -66,7 +66,7 @@ The `baseUrl` parameter is optional and defaults to `https://api.mollie.com/v2`.
 
 ## Responses
 
-Mollie's API returns JSON objects in response to all requests (see https://stripe.com/docs/api). **mollie-cfml** deserializes this response into a CFML struct and makes it available in a response struct under the `data` key.
+Mollie's API returns JSON objects in response to all requests. **mollie-cfml** deserializes this response into a CFML struct and makes it available in a response struct under the `data` key.
 
 Responses to API calls are all returned as structs in the following format:
 
@@ -120,3 +120,7 @@ Responses to API calls are all returned as structs in the following format:
 |               | listSubscriptionPayments()  |   |
 | [Settlements](https://docs.mollie.com/reference/v2/settlements-api/overview)   | getSettlement()             |   |
 
+
+## Acknowledgements
+
+This project was inspired by stripecfml created by [jcberquist](https://github.com/jcberquist).
