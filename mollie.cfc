@@ -20,7 +20,7 @@
 		hint      ="I return a new API response struct."
 	>
 		<!--- Create new API response. --->
-		<cfset response = { Success : true, Error : [], Data : "" }/>
+		<cfset response = { success : true, error : [], data : "" }/>
 		<!--- Return the empty response object. --->
 		<cfreturn response/>
 	</cffunction>
@@ -113,7 +113,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -190,9 +190,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="updatePayment: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -217,7 +215,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -243,7 +241,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -294,7 +292,7 @@
 					<cfhttpparam type="url" name="orderLineCategories" value="#arguments.orderLineCategories#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -322,7 +320,7 @@
 					<cfhttpparam type="url" name="amount[currency]" value="#arguments.currency#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -354,7 +352,7 @@
 					<cfhttpparam type="url" name="currency" value="#arguments.currency#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -414,9 +412,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="createRefund: #serializeJSON( mollieresult )#"/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -442,7 +438,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -471,7 +467,7 @@
 					<cfhttpparam type="url" name="testmode" value="#arguments.testmode#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -503,7 +499,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -529,7 +525,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -556,7 +552,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -587,7 +583,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -613,7 +609,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -754,14 +750,12 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="updatePayment: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
 
-				<cflog file="mollie" text="Error in updatePayment: #serializeJSON( cfcatch )#"/>
+				<cflog file="mollie" text="Error in updateCustomer: #serializeJSON( cfcatch )#"/>
 			</cfcatch>
 		</cftry>
 		<cfreturn response/>
@@ -781,7 +775,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -807,12 +801,12 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
 
-				<cflog file="mollie" text="Error in listAllChargebacks: #serializeJSON( cfcatch )#"/>
+				<cflog file="mollie" text="Error in listCustomers: #serializeJSON( cfcatch )#"/>
 			</cfcatch>
 		</cftry>
 		<cfreturn response/>
@@ -884,9 +878,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="createCustomerPayment: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -917,7 +909,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -981,9 +973,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="createMandate: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1036,7 +1026,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1067,7 +1057,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfset raw = deserializeJSON( mollieresult.filecontent )/>
 
 			<cfif structKeyExists( raw._embedded, "mandates" )>
@@ -1163,9 +1153,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="createSubscription: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1193,7 +1181,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1282,9 +1270,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
-			<cfset response.body = messageBody/>
-			<cflog file="mollie" text="updateSubscription: #serializeJSON( mollieresult )#"/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1312,7 +1298,7 @@
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1348,7 +1334,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1377,7 +1363,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1414,7 +1400,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
@@ -1444,7 +1430,7 @@
 					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
 				</cfif>
 			</cfhttp>
-			<cfset response.data = mollieresult/>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
 				<cfset response.error = cfcatch.message/>
