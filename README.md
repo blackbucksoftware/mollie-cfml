@@ -1,6 +1,6 @@
 # mollie-cfml
 
-**mollie-cfml** is a CFML library for interacting with the Mollie API v2.
+**mollie-cfml** is a CFML library for interacting with the Mollie API v2. [Mollie](https://mollie.com) is a Payment Service Provider (PSP) focusing on the European market.
 
 ## Installation
 This wrapper can be installed as standalone library or as a ColdBox Module. Either approach requires a simple CommandBox command:
@@ -58,9 +58,28 @@ property name="mollie" inject="mollie@molliecfml";
 <cflocation url=paymentLink.data._links.checkout.href addtoken=false />    
 ```
 
-## Methods available
+## Configuration
 
-**mollie-cfml** covers currently these methods of the Mollie API v2:
+The only required config parameter is your Mollie API `key`. **mollie-cfml** will happily accept both test and live keys.
+The `baseUrl` parameter is optional and defaults to `https://api.mollie.com/v2`. 
+
+
+## Responses
+
+Mollie's API returns JSON objects in response to all requests (see https://stripe.com/docs/api). **mollie-cfml** deserializes this response into a CFML struct and makes it available in a response struct under the `data` key.
+
+Responses to API calls are all returned as structs in the following format:
+
+```cfc
+{
+    data: {}                // struct containing the body of the response
+    error: {}               // struct containing error messages received
+    success: true|false    // boolean containing the overall result of the request
+}
+```
+## Methods Available
+
+**mollie-cfml** currently covers these methods of the Mollie API v2:
 
 
 | Mollie API    | methods available           |   |
