@@ -1,8 +1,8 @@
 {
     "name":"Mollie CFML",
-    "version":"0.4.2",
+    "version":"0.5.0",
     "author":"Blackbuck Software GmbH",
-    "location":"blackbucksoftware/mollie-cfml#v0.4.2",
+    "location":"blackbucksoftware/mollie-cfml#v0.5.0",
     "homepage":"https://github.com/blackbucksoftware/mollie-cfml",
     "documentation":"",
     "repository":{

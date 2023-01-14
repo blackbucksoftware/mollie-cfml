@@ -123,7 +123,7 @@ Responses to API calls are all returned as structs in the following format:
 
 ## Todo
 * Add ColdBox interceptors
-* Add more tests
+* Add more testing
 
 ## Acknowledgements
 
