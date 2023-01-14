@@ -509,6 +509,7 @@
 		</cftry>
 		<cfreturn response/>
 	</cffunction>
+
 	<cffunction name="listAllRefunds" localmode="modern" access="public" output="false" returntype="any" hint="">
 		<cfargument name="from" type="string" required="false"/>
 		<cfargument name="limit" type="numeric" required="false"/>
@@ -535,6 +536,7 @@
 		</cftry>
 		<cfreturn response/>
 	</cffunction>
+
 	<!--- ***************************** CHARGEBACKS API **************************** --->
 	<cffunction name="getChargeback" localmode="modern" access="public" output="false" returntype="any" hint="">
 		<cfargument name="id" type="string" required="true"/>
@@ -1448,4 +1450,98 @@
 
 		<cfreturn response/>
 	</cffunction>
+
+	<cffunction name="listSettlementPayments" localmode="modern" access="public" output="false" returntype="any" hint="">
+		<cfargument name="settlement" type="string" required="true"/>
+		<cfargument name="from" type="string" required="false"/>
+		<cfargument name="limit" type="numeric" required="false"/>
+
+		<cfset response = this.GetNewResponse()/>
+		<cfset response.success = true/>
+		<cftry>
+			<cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/settlements/#arguments.settlement#/payments">
+				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+				<cfif structKeyExists( arguments, "from" )>
+					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "limit" )>
+					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+				</cfif>
+			</cfhttp>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
+			<cfcatch type="any">
+				<cfset response.success = false/>
+				<cfset response.error = cfcatch.message/>
+
+				<cflog file="mollie" text="Error in listSettlementPayments: #serializeJSON( cfcatch )#"/>
+			</cfcatch>
+		</cftry>
+		<cfreturn response/>
+	</cffunction>
+
+	<cffunction name="listSettlementRefunds" localmode="modern" access="public" output="false" returntype="any" hint="">
+		<cfargument name="settlement" type="string" required="true"/>
+		<cfargument name="from" type="string" required="false"/>
+		<cfargument name="limit" type="numeric" required="false"/>
+
+		<cfset response = this.GetNewResponse()/>
+		<cfset response.success = true/>
+		<cftry>
+			<cfhttp
+				result ="mollieresult"
+				method ="GET"
+				charset="utf-8"
+				url    ="#variables.instance.baseUrl#/settlements/#arguments.settlement#/refunds"
+			>
+				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+				<cfif structKeyExists( arguments, "from" )>
+					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "limit" )>
+					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+				</cfif>
+			</cfhttp>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
+			<cfcatch type="any">
+				<cfset response.success = false/>
+				<cfset response.error = cfcatch.message/>
+
+				<cflog file="mollie" text="Error in listSettlementRefunds: #serializeJSON( cfcatch )#"/>
+			</cfcatch>
+		</cftry>
+		<cfreturn response/>
+	</cffunction>
+
+	<cffunction name="listSettlementChargebacks" localmode="modern" access="public" output="false" returntype="any" hint="">
+		<cfargument name="settlement" type="string" required="true"/>
+		<cfargument name="from" type="string" required="false"/>
+		<cfargument name="limit" type="numeric" required="false"/>
+		<cfset response = this.GetNewResponse()/>
+		<cfset response.success = true/>
+		<cftry>
+			<cfhttp
+				result ="mollieresult"
+				method ="GET"
+				charset="utf-8"
+				url    ="#variables.instance.baseUrl#/settlements/#arguments.settlement#/chargebacks"
+			>
+				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+				<cfif structKeyExists( arguments, "from" )>
+					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "limit" )>
+					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+				</cfif>
+			</cfhttp>
+            <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
+			<cfcatch type="any">
+				<cfset response.success = false/>
+				<cfset response.error = cfcatch.message/>
+
+				<cflog file="mollie" text="Error in listSettlementChargebacks: #serializeJSON( cfcatch )#"/>
+			</cfcatch>
+		</cftry>
+		<cfreturn response/>
+	</cffunction>
+
 </cfcomponent>
