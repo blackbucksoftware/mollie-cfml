@@ -17,8 +17,8 @@ Once the library has been installed, the core `mollie` component can be instanti
 
 ```cfc
 mollie = new path.to.molliecfml.mollie(
-    key = '',
-    baseUrl = ''
+    key = 'YOUR_MOLLIE_API_KEY',
+    baseUrl = 'https://api.mollie.com/v2'
 );
 ```
 
@@ -29,8 +29,8 @@ To use the library as a ColdBox Module, add the init arguments to the `moduleSet
 ```cfc
 moduleSettings = {
     molliecfml: {
-        key: '',
-        baseUrl: ''
+        key: 'YOUR_MOLLIE_API_KEY',
+        baseUrl: 'https://api.mollie.com/v2'
     }
 }
 ```
@@ -51,7 +51,7 @@ property name="mollie" inject="mollie@molliecfml";
         description = "My Item",
         redirectUrl = "https://my.site.com/thankyou",
         webhookUrl = "https://my.site.com/mollie",
-        method = "sofort,giropay,creditcard,applepay,ideal,eps",
+        method = "[sofort,giropay,creditcard,applepay,ideal,eps]",
         metadata = [ { "orderid": "ABC001" } ]
     ) />
 
@@ -126,7 +126,7 @@ Responses to API calls are all returned as structs in the following format:
 
 ## Todo
 * Add ColdBox interceptors
-* Add more testing
+* Write more tests
 
 ## Acknowledgements
 
