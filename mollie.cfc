@@ -1490,24 +1490,26 @@
 		<cfargument name="settlement" type="string" required="true"/>
 		<cfargument name="from" type="string" required="false"/>
 		<cfargument name="limit" type="numeric" required="false"/>
+		<cfargument name="fullurl" type="string" required="false" default="" />
 
 		<cfset response = this.GetNewResponse()/>
 		<cfset response.success = true/>
 		<cftry>
-			<cfhttp
-				result ="mollieresult"
-				method ="GET"
-				charset="utf-8"
-				url    ="#variables.instance.baseUrl#/settlements/#arguments.settlement#/refunds"
-			>
-				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
-				<cfif structKeyExists( arguments, "from" )>
-					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
-				</cfif>
-				<cfif structKeyExists( arguments, "limit" )>
-					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
-				</cfif>
-			</cfhttp>
+			<cfif arguments.fullurl NEQ "">
+                <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#arguments.fullurl#">
+                    <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                </cfhttp>
+            <cfelse>
+				<cfhttp result ="mollieresult" method ="GET" charset="utf-8" url="#variables.instance.baseUrl#/settlements/#arguments.settlement#/refunds">
+					<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+					<cfif structKeyExists( arguments, "from" )>
+						<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+					</cfif>
+					<cfif structKeyExists( arguments, "limit" )>
+						<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+					</cfif>
+				</cfhttp>
+			</cfif>
 			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
@@ -1523,23 +1525,25 @@
 		<cfargument name="settlement" type="string" required="true"/>
 		<cfargument name="from" type="string" required="false"/>
 		<cfargument name="limit" type="numeric" required="false"/>
+		<cfargument name="fullurl" type="string" required="false" default="" />
 		<cfset response = this.GetNewResponse()/>
 		<cfset response.success = true/>
 		<cftry>
-			<cfhttp
-				result ="mollieresult"
-				method ="GET"
-				charset="utf-8"
-				url    ="#variables.instance.baseUrl#/settlements/#arguments.settlement#/chargebacks"
-			>
-				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
-				<cfif structKeyExists( arguments, "from" )>
-					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
-				</cfif>
-				<cfif structKeyExists( arguments, "limit" )>
-					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
-				</cfif>
-			</cfhttp>
+			<cfif arguments.fullurl NEQ "">
+                <cfhttp result="mollieresult" method="GET" charset="utf-8" url="#arguments.fullurl#">
+                    <cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#" />
+                </cfhttp>
+            <cfelse>
+				<cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/settlements/#arguments.settlement#/chargebacks">
+					<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+					<cfif structKeyExists( arguments, "from" )>
+						<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+					</cfif>
+					<cfif structKeyExists( arguments, "limit" )>
+						<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+					</cfif>
+				</cfhttp>
+			</cfif>
             <cfset response.data = deserializeJSON( mollieresult.filecontent )/>
 			<cfcatch type="any">
 				<cfset response.success = false/>
