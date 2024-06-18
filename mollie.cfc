@@ -84,7 +84,7 @@
 		</cfscript>
 
 		<cftry>
-			<cfhttp result="mollieresult" method="POST" charset="utf-8" url="#variables.instance.baseUrl#/payments">
+			<cfhttp result="mollieresult" method="POST" timeout="30" charset="utf-8" url="#variables.instance.baseUrl#/payments">
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#messageBody#"/>
@@ -109,6 +109,7 @@
 				result ="mollieresult"
 				method ="GET"
 				charset="utf-8"
+				timeout="30"
 				url    ="#variables.instance.baseUrl#/payments/#arguments.id#"
 			>
 				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
