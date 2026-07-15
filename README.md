@@ -122,6 +122,8 @@ Responses to API calls are all returned as structs in the following format:
 |               | listSettlementPayments()    |   |
 |               | listSettlementRefunds()     |   |
 |               | listSettlementChargebacks() |   |
+| [Invoices](https://docs.mollie.com/reference/v2/invoices-api/overview)      | getInvoice()                |   |
+|               | listInvoices()               |   |
 
 
 ## Todo

@@ -1556,4 +1556,69 @@
 		<cfreturn response/>
 	</cffunction>
 
+	<!--- ***************************** INVOICES API ****************************** --->
+	<cffunction name="getInvoice" localmode="modern" access="public" output="false" returntype="any" hint="">
+		<cfargument name="invoiceId" type="string" required="true"/>
+
+		<cfset response = this.GetNewResponse()/>
+		<cfset response.success = true/>
+		<cftry>
+			<cfhttp
+				result ="mollieresult"
+				method ="GET"
+				charset="utf-8"
+				url    ="#variables.instance.baseUrl#/invoices/#arguments.invoiceId#"
+			>
+				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+			</cfhttp>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
+			<cfcatch type="any">
+				<cfset response.success = false/>
+				<cfset response.error = cfcatch.message/>
+
+				<cflog file="mollie" text="Error in getInvoice: #serializeJSON( cfcatch )#"/>
+			</cfcatch>
+		</cftry>
+		<cfreturn response/>
+	</cffunction>
+
+	<cffunction name="listInvoices" localmode="modern" access="public" output="false" returntype="any" hint="">
+		<cfargument name="reference" type="string" required="false"/>
+		<cfargument name="year" type="string" required="false"/>
+		<cfargument name="from" type="string" required="false"/>
+		<cfargument name="limit" type="numeric" required="false"/>
+		<cfargument name="sort" type="string" required="false"/>
+
+		<cfset response = this.GetNewResponse()/>
+		<cfset response.success = true/>
+		<cftry>
+			<cfhttp result="mollieresult" method="GET" charset="utf-8" url="#variables.instance.baseUrl#/invoices">
+				<cfhttpparam type="header" name="Authorization" value="Bearer #variables.instance.key#"/>
+				<cfif structKeyExists( arguments, "reference" )>
+					<cfhttpparam type="url" name="reference" value="#arguments.reference#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "year" )>
+					<cfhttpparam type="url" name="year" value="#arguments.year#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "from" )>
+					<cfhttpparam type="url" name="from" value="#arguments.from#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "limit" )>
+					<cfhttpparam type="url" name="limit" value="#arguments.limit#"/>
+				</cfif>
+				<cfif structKeyExists( arguments, "sort" )>
+					<cfhttpparam type="url" name="sort" value="#arguments.sort#"/>
+				</cfif>
+			</cfhttp>
+			<cfset response.data = deserializeJSON( mollieresult.filecontent )/>
+			<cfcatch type="any">
+				<cfset response.success = false/>
+				<cfset response.error = cfcatch.message/>
+
+				<cflog file="mollie" text="Error in listInvoices: #serializeJSON( cfcatch )#"/>
+			</cfcatch>
+		</cftry>
+		<cfreturn response/>
+	</cffunction>
+
 </cfcomponent>
